@@ -1,0 +1,21 @@
+---
+layout: default
+title: ホーム
+---
+
+<div class="post-grid">
+  {% for post in site.posts %}
+  <div class="post-card">
+    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+    <p>{{ post.description }}</p>
+    <div class="date">{{ post.date | date: "%Y年%m月%d日" }}</div>
+  </div>
+  {% endfor %}
+
+  {% if site.posts.size == 0 %}
+  <div class="post-card">
+    <h2>記事を準備中です 🌱</h2>
+    <p>まもなく記事が自動投稿されます。しばらくお待ちください。</p>
+  </div>
+  {% endif %}
+</div>

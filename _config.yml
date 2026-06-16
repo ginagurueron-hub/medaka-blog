@@ -1,0 +1,21 @@
+title: "観葉植物ライフ"          # ← サイト名を変更
+description: "初心者でも育てやすい観葉植物の育て方・選び方を徹底解説"
+url: "https://あなたのユーザー名.github.io"
+baseurl: "/your-repo-name"
+
+# Jekyll設定
+markdown: kramdown
+permalink: /:year/:month/:day/:title/
+
+# プラグイン
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap   # SEO用サイトマップ自動生成
+
+# ページネーション
+paginate: 10
+paginate_path: "/page:num/"
+
+# SEO
+lang: ja
+timezone: Asia/Tokyo

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+
+  <!-- OGP -->
+  <meta property="og:title" content="{{ page.title }}">
+  <meta property="og:description" content="{{ page.description }}">
+  <meta property="og:type" content="article">
+
+  <!-- Google AdSense -->
+  <!-- ⚠️ 審査通過後に publisher IDを入れてください -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: #F7F9F4;
+      color: #2C3E2D;
+      line-height: 1.85;
+    }
+
+    /* ヘッダー */
+    header {
+      background: #2C3E2D;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header a { color: #A8D5A2; text-decoration: none; font-size: 1.2rem; font-weight: 700; }
+    nav a { color: #ccc; text-decoration: none; margin-left: 20px; font-size: 0.9rem; }
+
+    /* メインレイアウト */
+    .container {
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 40px;
+    }
+
+    @media (max-width: 700px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    /* 記事 */
+    article {
+      background: #fff;
+      border-radius: 12px;
+      padding: 36px 40px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    article h1 {
+      font-size: 1.65rem;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      color: #1a2e1b;
+    }
+
+    .meta {
+      font-size: 0.82rem;
+      color: #888;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eef2ec;
+    }
+
+    .tags span {
+      background: #E8F5E3;
+      color: #3a7d44;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      margin-right: 6px;
+    }
+
+    article h2 {
+      font-size: 1.25rem;
+      margin: 36px 0 14px;
+      padding-left: 14px;
+      border-left: 4px solid #6ab04c;
+      color: #1a2e1b;
+    }
+
+    article h3 {
+      font-size: 1.05rem;
+      margin: 24px 0 10px;
+      color: #2C3E2D;
+    }
+
+    article p { margin-bottom: 16px; font-size: 0.98rem; }
+
+    article ul, article ol {
+      padding-left: 24px;
+      margin-bottom: 16px;
+    }
+
+    article li { margin-bottom: 6px; font-size: 0.97rem; }
+
+    /* サイドバー */
+    aside { }
+
+    .widget {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .widget h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #3a7d44;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .post-list { list-style: none; }
+    .post-list li { padding: 8px 0; border-bottom: 1px solid #f0f4ee; }
+    .post-list li:last-child { border-bottom: none; }
+    .post-list a { text-decoration: none; color: #2C3E2D; font-size: 0.88rem; }
+    .post-list a:hover { color: #3a7d44; }
+
+    /* トップページ記事一覧 */
+    .post-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .post-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: box-shadow 0.2s;
+    }
+
+    .post-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+
+    .post-card h2 { font-size: 1.1rem; margin-bottom: 8px; }
+    .post-card h2 a { text-decoration: none; color: #1a2e1b; }
+    .post-card p { font-size: 0.88rem; color: #666; margin: 0; }
+    .post-card .date { font-size: 0.78rem; color: #aaa; margin-top: 10px; }
+
+    /* フッター */
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-top: 60px;
+      border-top: 1px solid #e8f0e5;
+    }
+
+    /* 広告枠 */
+    .ad-unit {
+      background: #f0f4ee;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #aaa;
+      margin: 28px 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="{{ site.baseurl }}/">🌿 {{ site.title }}</a>
+  <nav>
+    <a href="{{ site.baseurl }}/">ホーム</a>
+    <a href="{{ site.baseurl }}/about/">About</a>
+  </nav>
+</header>
+
+<div class="container">
+  <main>
+    {{ content }}
+  </main>
+
+  <aside>
+    <div class="widget">
+      <h3>広告</h3>
+      <div class="ad-unit">
+        <!-- AdSense審査通過後に広告コードを貼る -->
+        広告スペース
+      </div>
+    </div>
+
+    <div class="widget">
+      <h3>最新記事</h3>
+      <ul class="post-list">
+        {% for post in site.posts limit:8 %}
+        <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="widget">
+      <h3>タグ</h3>
+      {% for tag in site.tags %}
+        <span style="display:inline-block; background:#E8F5E3; color:#3a7d44; padding:2px 10px; border-radius:20px; font-size:0.78rem; margin:3px;">
+          {{ tag[0] }}
+        </span>
+      {% endfor %}
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <p>&copy; {{ 'now' | date: '%Y' }} {{ site.title }} | 本サイトはアフィリエイト広告を含む場合があります</p>
+</footer>
+
+</body>
+</html>
