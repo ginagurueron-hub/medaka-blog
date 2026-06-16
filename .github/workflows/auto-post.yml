@@ -1,0 +1,38 @@
+name: 毎週自動記事投稿
+
+on:
+  schedule:
+    # 毎週月曜日 AM9:00 (JST) に実行
+    - cron: '0 0 * * 1'
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  generate-and-post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 必要パッケージをインストール
+        run: pip install anthropic python-frontmatter
+
+      - name: 記事を自動生成
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python generate_article.py
+
+      - name: Gitコミット & プッシュ
+        run: |
+          git config user.name "AutoBot"
+          git config user.email "bot@auto.com"
+          git add _posts/
+          git commit -m "🤖 自動記事追加: $(date '+%Y-%m-%d')" || echo "変更なし"
+          git push
