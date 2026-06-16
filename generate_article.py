@@ -1,8 +1,3 @@
-"""
-自動記事生成スクリプト
-Claude APIを使って毎週新しい記事を生成し、_posts/ に保存する
-"""
-
 import os
 import json
 import random
@@ -17,42 +12,27 @@ ARTICLE_TOPICS = [
     "メダカのビオトープ 初心者向け必要なものと作り方",
     "室内メダカ飼育に必要なもの一覧【最低限の費用まとめ】",
     "メダカを買う前に知っておくべき5つのこと",
-    "メダカ飼育の初期費用はいくら？最安セット構成を解説",
     "改良メダカの品種一覧【初心者におすすめ10選と選び方】",
     "三色メダカとは？特徴・値段・飼い方を初心者向けに解説",
     "幹之メダカの種類と体外光の違いをわかりやすく比較",
     "ラメメダカの飼い方と光を綺麗に出すコツ",
     "ダルマメダカの飼い方【体型の特徴と繁殖が難しい理由】",
-    "マリアージュメダカとは？特徴と入手方法・相場を解説",
     "メダカの針子が死ぬ原因と生存率を劇的に上げる3つの方法",
     "メダカの卵の管理方法【孵化までの日数と水温・注意点】",
     "メダカが産卵しない6つの原因と今すぐできる対策",
-    "稚魚と親メダカを分けるタイミングと安全な隔離方法",
     "メダカの繁殖サイクルと増やすために必要な環境づくり",
-    "針子の餌は何がいい？種類と与え方・頻度を徹底解説",
     "メダカの冬越し 屋外飼育で絶対失敗しない方法",
-    "メダカの夏対策 水温上昇を防ぐ5つのコツと日よけの選び方",
-    "春のメダカ飼育 繁殖シーズン前にやること・揃えるもの",
-    "メダカの屋外飼育 月別管理カレンダー",
+    "メダカの夏対策 水温上昇を防ぐ5つのコツ",
     "メダカ水槽の水換え頻度と正しいやり方【初心者向け】",
     "メダカが次々と死ぬ原因TOP5と今すぐできる対処法",
     "メダカの白点病 症状・原因・治療薬の使い方を解説",
     "メダカがエサを食べない時の原因と対処法",
     "メダカ水槽の水が白く濁る原因と解決策",
-    "メダカがぼーっとしている・元気がない時のチェックリスト",
     "メダカの産卵床おすすめ5選【卵を効率よく採る方法も解説】",
     "メダカ用フィルターおすすめ5選【水流が弱いものを厳選】",
     "メダカの餌おすすめランキング【稚魚・成魚別に徹底比較】",
     "メダカ屋外飼育容器おすすめ5選【トロ舟・発泡スチロール比較】",
-    "メダカ水槽に入れる水草おすすめ5選【産卵・水質改善効果も】",
 ]
-
-ADSENSE_CODE = """
-<!-- Google AdSense -->
-<!-- 審査通過後にここにAdSenseコードを貼り付けてください -->
-"""
-
-client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
 
 def get_used_topics():
@@ -81,67 +61,70 @@ def pick_topic():
 
 
 def generate_article(topic):
-    print(f"記事を生成中: {topic}")
-    prompt = f"""あなたはメダカ飼育に詳しいSEOライターです。
-「{SITE_THEME}」の読者向けに記事を書いてください。
+    print("記事を生成中: " + topic)
+    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-タイトル: {topic}
-
-以下のJSON形式のみで出力してください（前置き不要）:
-{{
-  "title": "記事タイトル",
-  "description": "120文字以内のメタディスクリプション",
-  "tags": ["メダカ", "メダカ飼育", "改良メダカ"],
-  "body": "本文（Markdown形式・1800文字以上）"
-}}
-
-本文の構成:
-## この記事でわかること
-## メインコンテンツ（h2見出し2〜3個）
-## よくある質問
-## まとめ"""
+    prompt = "あなたはメダカ飼育に詳しいSEOライターです。\n"
+    prompt += "テーマ「" + SITE_THEME + "」の記事を書いてください。\n"
+    prompt += "タイトル: " + topic + "\n\n"
+    prompt += "必ずJSON形式だけで出力してください。他のテキストは不要です。\n"
+    prompt += "{\n"
+    prompt += '  "title": "タイトルをここに",\n'
+    prompt += '  "description": "120文字以内の説明",\n'
+    prompt += '  "tags": ["メダカ", "メダカ飼育"],\n'
+    prompt += '  "body": "本文をMarkdown形式で1500文字以上"\n'
+    prompt += "}"
 
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=2000,
+        max_tokens=3000,
         messages=[{"role": "user", "content": prompt}],
     )
+
     raw = message.content[0].text.strip()
+    print("APIレスポンス取得完了")
+
+    if raw.startswith("```"):
+        lines = raw.split("\n")
+        lines = [l for l in lines if not l.startswith("```")]
+        raw = "\n".join(lines)
+
     start = raw.find("{")
     end = raw.rfind("}") + 1
-    data = json.loads(raw[start:end])
+    if start == -1 or end == 0:
+        raise ValueError("JSONが見つかりません: " + raw[:200])
+
+    json_str = raw[start:end]
+    data = json.loads(json_str)
     return data
 
 
 def create_jekyll_post(article):
     today = datetime.now().strftime("%Y-%m-%d")
-    tags_str = "\n".join([f"  - {t}" for t in article["tags"]])
-    front_matter = f"""---
-layout: default
-title: "{article['title']}"
-date: {today}
-description: "{article['description']}"
-tags:
-{tags_str}
----
+    tags_str = ""
+    for t in article["tags"]:
+        tags_str += "  - " + t + "\n"
 
-"""
-    body = article["body"]
-    paragraphs = body.split("\n\n")
-    mid = len(paragraphs) // 2
-    paragraphs.insert(mid, ADSENSE_CODE)
-    body_with_ads = "\n\n".join(paragraphs)
-    return front_matter + body_with_ads
+    front_matter = "---\n"
+    front_matter += "layout: default\n"
+    front_matter += 'title: "' + article["title"] + '"\n'
+    front_matter += "date: " + today + "\n"
+    front_matter += 'description: "' + article["description"] + '"\n'
+    front_matter += "tags:\n"
+    front_matter += tags_str
+    front_matter += "---\n\n"
+
+    return front_matter + article["body"]
 
 
-def save_post(content, title):
+def save_post(content):
     os.makedirs("_posts", exist_ok=True)
     today = datetime.now().strftime("%Y-%m-%d")
-    slug = f"article-{datetime.now().strftime('%H%M%S')}"
-    filename = f"_posts/{today}-{slug}.md"
+    slug = "article-" + datetime.now().strftime("%H%M%S")
+    filename = "_posts/" + today + "-" + slug + ".md"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(content)
-    print(f"保存完了: {filename}")
+    print("保存完了: " + filename)
     return filename
 
 
@@ -149,9 +132,9 @@ def main():
     topic = pick_topic()
     article = generate_article(topic)
     post_content = create_jekyll_post(article)
-    save_post(post_content, article["title"])
+    save_post(post_content)
     save_used_topic(topic)
-    print(f"完了！ '{article['title']}' を公開準備しました")
+    print("完了: " + article["title"])
 
 
 if __name__ == "__main__":
