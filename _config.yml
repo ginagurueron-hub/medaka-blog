@@ -1,7 +1,7 @@
 title: "メダカライフ"          # ← サイト名を変更
-description: "初心者でも育てやすい観葉植物の育て方・選び方を徹底解説"
-url: "https://あなたのユーザー名.github.io"
-baseurl: "/your-repo-name"
+description: "初心者でも楽しめるメダカ飼育・改良メダカの育て方ガイド"
+url: "https://ginagurueron-hub.github.io"
+baseurl: "/medaka-blog"
 
 # Jekyll設定
 markdown: kramdown
