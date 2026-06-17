@@ -77,7 +77,7 @@ def generate_article(topic):
 
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=3000,
+        max_tokens=4000,
         messages=[{"role": "user", "content": prompt}],
     )
 
