@@ -28,12 +28,23 @@
 
     /* ヘッダー */
     header {
-      background: #2C3E2D;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+  background: #2C3E2D url('/medaka-blog/34334323_m.jpg') center/cover no-repeat;
+  padding: 40px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+}
+header > * {
+  position: relative;
+  z-index: 1;
+}
     header a { color: #A8D5A2; text-decoration: none; font-size: 1.2rem; font-weight: 700; }
     nav a { color: #ccc; text-decoration: none; margin-left: 20px; font-size: 0.9rem; }
 
