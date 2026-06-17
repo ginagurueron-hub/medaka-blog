@@ -19,3 +19,5 @@ paginate_path: "/page:num/"
 # SEO
 lang: ja
 timezone: Asia/Tokyo
+kramdown:
+  parse_block_html: true
