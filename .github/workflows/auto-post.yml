@@ -26,7 +26,12 @@ jobs:
       - name: 必要パッケージをインストール
         run: pip install anthropic
 
-      - name: 記事を自動生成
+      - name: 記事を自動生成（1本目）
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python generate_article.py
+
+      - name: 記事を自動生成（2本目）
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python generate_article.py
