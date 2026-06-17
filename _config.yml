@@ -5,7 +5,7 @@ baseurl: "/medaka-blog"
 
 # Jekyll設定
 markdown: kramdown
-permalink:  pretty
+permalink: /:year/:month/:day/:title/
 
 # プラグイン
 plugins:
