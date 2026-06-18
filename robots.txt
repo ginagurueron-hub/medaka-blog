@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ginagurueron-hub.github.io/medaka-blog/sitemap.xml
