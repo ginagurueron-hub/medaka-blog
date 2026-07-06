@@ -1,6 +1,7 @@
 import os
 import json
 import random
+import requests
 from datetime import datetime
 import anthropic
 
@@ -60,6 +61,26 @@ def pick_topic():
     return random.choice(remaining)
 
 
+def get_unsplash_image(keyword="medaka fish"):
+    access_key = os.environ.get("UNSPLASH_ACCESS_KEY", "")
+    if not access_key:
+        return None, None, None
+    try:
+        url = "https://api.unsplash.com/photos/random"
+        params = {"query": keyword, "orientation": "landscape"}
+        headers = {"Authorization": "Client-ID " + access_key}
+        response = requests.get(url, params=params, headers=headers, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            img_url = data["urls"]["regular"]
+            photographer = data["user"]["name"]
+            unsplash_link = data["links"]["html"]
+            return img_url, photographer, unsplash_link
+    except Exception as e:
+        print("Unsplash画像取得失敗: " + str(e))
+    return None, None, None
+
+
 def generate_article(topic):
     print("記事を生成中: " + topic)
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
@@ -114,6 +135,13 @@ def create_jekyll_post(article):
     front_matter += tags_str
     front_matter += "---\n\n"
 
+    img_url, photographer, unsplash_link = get_unsplash_image("medaka fish aquarium")
+    if img_url:
+        image_block = "![メダカ](" + img_url + ")\n"
+        image_block += "*Photo by [" + photographer + "](" + unsplash_link + ") on [Unsplash](https://unsplash.com)*\n\n"
+    else:
+        image_block = ""
+
     affiliate_block = """
 ---
 
@@ -133,7 +161,7 @@ msmaflink({"n":"（めだか）（水草）おしゃれにテーブルで楽し�
 <!-- MoshimoAffiliateEasyLink END -->
 """
 
-    return front_matter + article["body"] + affiliate_block
+    return front_matter + image_block + article["body"] + affiliate_block
 
 
 def save_post(content):
