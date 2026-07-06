@@ -52,33 +52,11 @@ def save_used_topic(topic):
 
 
 def pick_topic():
-    used = get_used_topics()
-    remaining = [t for t in ARTICLE_TOPICS if t not in used]
-    if not remaining:
-        remaining = ARTICLE_TOPICS
-        with open("used_topics.json", "w") as f:
-            json.dump([], f)
-    return random.choice(remaining)
-
-
-def get_unsplash_image(keyword="medaka fish"):
-    access_key = os.environ.get("UNSPLASH_ACCESS_KEY", "")
-    if not access_key:
-        return None, None, None
-    try:
-        url = "https://api.unsplash.com/photos/random"
-        params = {"query": keyword, "orientation": "landscape"}
-        headers = {"Authorization": "Client-ID " + access_key}
-        response = requests.get(url, params=params, headers=headers, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            img_url = data["urls"]["regular"]
-            photographer = data["user"]["name"]
-            unsplash_link = data["links"]["html"]
-            return img_url, photographer, unsplash_link
-    except Exception as e:
-        print("Unsplash画像取得失敗: " + str(e))
-    return None, None, None
+    def get_unsplash_image(keyword="medaka fish"):
+    img_url = "https://source.unsplash.com/800x400/?medaka,fish,aquarium"
+    photographer = "Unsplash"
+    unsplash_link = "https://unsplash.com"
+    return img_url, photographer, unsplash_link
 
 
 def generate_article(topic):
