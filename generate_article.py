@@ -61,10 +61,29 @@ def pick_topic():
 
 
 def get_unsplash_image(keyword="medaka fish"):
-    img_url = "https://source.unsplash.com/800x400/?medaka,fish,aquarium"
-    photographer = "Unsplash"
-    unsplash_link = "https://unsplash.com"
-    return img_url, photographer, unsplash_link
+    try:
+        url = "https://commons.wikimedia.org/w/api.php"
+        params = {
+            "action": "query",
+            "generator": "search",
+            "gsrsearch": "medaka fish",
+            "gsrnamespace": "6",
+            "prop": "imageinfo",
+            "iiprop": "url",
+            "gsrlimit": "10",
+            "format": "json"
+        }
+        response = requests.get(url, params=params, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            pages = data.get("query", {}).get("pages", {})
+            for page in pages.values():
+                imageinfo = page.get("imageinfo", [])
+                if imageinfo:
+                    img_url = imageinfo[0]["url"]
+                    if img_url.endswith((".jpg", ".jpeg", ".png")):
+                        return img_url, "Wikimedia Commons", "https://commons.wikimedia.org"
+    except Exception as e:
 
 
 def generate_article(topic):
