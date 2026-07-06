@@ -1,6 +1,7 @@
 import os
 import json
 import random
+import requests
 from datetime import datetime
 import anthropic
 
@@ -84,6 +85,8 @@ def get_unsplash_image(keyword="medaka fish"):
                     if img_url.endswith((".jpg", ".jpeg", ".png")):
                         return img_url, "Wikimedia Commons", "https://commons.wikimedia.org"
     except Exception as e:
+        print("画像取得失敗: " + str(e))
+    return None, None, None
 
 
 def generate_article(topic):
@@ -141,8 +144,11 @@ def create_jekyll_post(article):
     front_matter += "---\n\n"
 
     img_url, photographer, unsplash_link = get_unsplash_image("medaka fish aquarium")
-    image_block = "![メダカ](" + img_url + ")\n"
-    image_block += "*Photo by [" + photographer + "](" + unsplash_link + ") on [Unsplash](https://unsplash.com)*\n\n"
+    if img_url:
+        image_block = "![メダカ](" + img_url + ")\n"
+        image_block += "*Photo by [" + photographer + "](" + unsplash_link + ")*\n\n"
+    else:
+        image_block = ""
 
     affiliate_block = """
 ---
