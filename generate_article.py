@@ -1,7 +1,6 @@
 import os
 import json
 import random
-import requests
 from datetime import datetime
 import anthropic
 
@@ -52,7 +51,16 @@ def save_used_topic(topic):
 
 
 def pick_topic():
-    def get_unsplash_image(keyword="medaka fish"):
+    used = get_used_topics()
+    remaining = [t for t in ARTICLE_TOPICS if t not in used]
+    if not remaining:
+        remaining = ARTICLE_TOPICS
+        with open("used_topics.json", "w") as f:
+            json.dump([], f)
+    return random.choice(remaining)
+
+
+def get_unsplash_image(keyword="medaka fish"):
     img_url = "https://source.unsplash.com/800x400/?medaka,fish,aquarium"
     photographer = "Unsplash"
     unsplash_link = "https://unsplash.com"
@@ -114,11 +122,8 @@ def create_jekyll_post(article):
     front_matter += "---\n\n"
 
     img_url, photographer, unsplash_link = get_unsplash_image("medaka fish aquarium")
-    if img_url:
-        image_block = "![メダカ](" + img_url + ")\n"
-        image_block += "*Photo by [" + photographer + "](" + unsplash_link + ") on [Unsplash](https://unsplash.com)*\n\n"
-    else:
-        image_block = ""
+    image_block = "![メダカ](" + img_url + ")\n"
+    image_block += "*Photo by [" + photographer + "](" + unsplash_link + ") on [Unsplash](https://unsplash.com)*\n\n"
 
     affiliate_block = """
 ---
