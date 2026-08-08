@@ -42,6 +42,6 @@ jobs:
         run: |
           git config user.name "AutoBot"
           git config user.email "bot@auto.com"
-          git add _posts/
+          git add _posts/ used_topics.json
           git commit -m "🤖 自動記事追加: $(date '+%Y-%m-%d')" || echo "変更なし"
           git push
